@@ -1,0 +1,140 @@
+<html>
+
+<head>
+    <title>d3 Fishbone diagram</title>
+    <meta charset="utf-8">
+    <style>
+        @import url("./style.css");
+    </style>
+</head>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js" charset="utf-8"></script>
+<script src="./fishbone.js" charset="utf-8"></script>
+<body>
+    <div id="fishbone1"></div>
+    <script>
+        // create the configurable selection modifier
+        var fishbone = d3.fishbone();
+
+        // load the data
+        var data = {
+            "name": "Quality",
+            "children": [{
+                "name": "Machine",
+                "children": [{
+                    "name": "Mill"
+                },
+                {
+                    "name": "Mixer"
+                },
+                {
+                    "name": "Metal Lathe"
+                }
+                ]
+            },
+            {
+                "name": "Method"
+            },
+            {
+                "name": "Material",
+                "children": [{
+                    "name": "Masonite"
+                },
+                {
+                    "name": "Marscapone",
+                    "children": [{
+                        "name": "Malty"
+                    },
+                    {
+                        "name": "Minty",
+                        "children": [{
+                            "name": "spearMint"
+                        },
+                        {
+                            "name": "pepperMint"
+                        }
+                        ]
+                    }
+                    ]
+                },
+                {
+                    "name": "Meat",
+                    "children": [{
+                        "name": "Mutton"
+                    }]
+                }
+                ]
+            },
+            {
+                "name": "Man Power",
+                "children": [{
+                    "name": "Manager"
+                },
+                {
+                    "name": "Master's Student"
+                },
+                {
+                    "name": "Magician"
+                },
+                {
+                    "name": "Miner"
+                },
+                {
+                    "name": "Magister",
+                    "children": [{
+                        "name": "Malpractice"
+                    }]
+                },
+                {
+                    "name": "Massage Artist",
+                    "children": [{
+                        "name": "Masseur"
+                    },
+                    {
+                        "name": "Masseuse"
+                    }
+                    ]
+                }
+                ]
+            },
+            {
+                "name": "Measurement",
+                "children": [{
+                    "name": "Malleability"
+                }]
+            },
+            {
+                "name": "Milieu",
+                "children": [{
+                    "name": "Marine"
+                }]
+            }
+            ]
+        }
+
+        // the most reliable way to get the screen size
+        var size = (function () {
+            return { width: this.clientWidth, height: this.clientHeight };
+        }).bind(window.document.documentElement);
+        var svg = d3.select("#fishbone1").append("svg");
+        // firefox needs a real size
+        svg.attr(size())
+        // set the data so the reusable chart can find it
+        svg.datum(data)
+        // set up the default arrowhead
+        svg.call(fishbone.defaultArrow)
+        // call the selection modifier
+        svg.call(fishbone);
+
+        // this is the actual `force`: just start it
+        fishbone.force().start();
+
+        // handle resizing the window
+        //d3.select(window).on("resize", function () {
+        //    fishbone.force()
+        //        .size([size().width, size().height])
+        //        .start();
+        //    svg.attr(size())
+        //});
+    </script>
+</body>
+</html>
