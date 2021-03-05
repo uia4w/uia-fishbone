@@ -1,10 +1,10 @@
-export default function(e) {
-    var k = 6 * e.alpha,
-    size = this._force.size(),
-    width = size[0],
-    height = size[1],
-    a,
-    b;
+export default function (e) {
+    var k = 3 * e.alpha,
+        size = this._force.size(),
+        width = size[0],
+        height = size[1],
+        a,
+        b;
 
     this._nodes.forEach(function (d) {
         // handle the middle... could probably store the root width...
@@ -36,7 +36,7 @@ export default function(e) {
             a = d.between[0];
             b = d.between[1];
             d.x = b.x - (b.x - a.x) * (1 + d.childIdx) / (b.maxChildIdx + 1);
-            d.y = b.y - (b.y - a.y) * (1 + d.childIdx)  / (b.maxChildIdx + 1);
+            d.y = b.y - (b.y - a.y) * (1 + d.childIdx) / (b.maxChildIdx + 1);
         }
     }.bind(this));
 
@@ -45,18 +45,16 @@ export default function(e) {
             return "translate(" + d.x + "," + d.y + ")";
         });
     this._svgLinks
-        .attr({
-            x1: function (d) {
-                return d.source.x;
-            },
-            y1: function (d) {
-                return d.source.y;
-            },
-            x2: function (d) {
-                return d.target.x;
-            },
-            y2: function (d) {
-                return d.target.y;
-            }
-        });
+        .attr("x1", function (d) {
+            return d.source.x;
+        })
+        .attr("y1", function (d) {
+            return d.source.y;
+        })
+        .attr("x2", function (d) {
+            return d.target.x;
+        })
+        .attr("y2", function (d) {
+            return d.target.y;
+        })
 }

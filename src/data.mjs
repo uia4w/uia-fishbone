@@ -1,20 +1,21 @@
-export default function(name) {
-    return new FishboneData(name);
+export default function(name, showed = true) {
+    return new FishboneData(name, showed);
 }
 
-function FishboneData(name) {
+function FishboneData(name, showed) {
     this.name = name;
+    this.showed = showed;
     this.children = [];
 }
 
-FishboneData.prototype.add = function(name) {
-    let data = new FishboneData(name);
+FishboneData.prototype.add = function(name, showed = true) {
+    let data = new FishboneData(name, showed);
     this.children.push(data);
     return data;
 }
 
-FishboneData.prototype.leaf = function(name) {
-    let data = new FishboneData(name);
+FishboneData.prototype.leaf = function(name, showed = true) {
+    let data = new FishboneData(name, showed);
     this.children.push(data);
     return this;
 }
@@ -25,9 +26,10 @@ FishboneData.prototype.build = function(chart) {
             "key": key,
             "owner": ownerKey,
             "name": data.name,
+            "showed": data.showed,
             "children": [],
-            "charting": function() {
-                return _clone(this);
+            "charting": function(maxShowed = 0) {
+                return _charting(this, maxShowed, 0);
             }
         }
         result[key] = value;
@@ -49,7 +51,10 @@ FishboneData.prototype.build = function(chart) {
     return result;
 }
 
-function _clone(data) {
+function _charting(data, maxShowed, depth) {
+    let max = Array.isArray(maxShowed) ?
+        maxShowed[Math.min(maxShowed.length - 1, depth)] :
+        maxShowed;
     if(!data) {
         return null;
     }
@@ -61,7 +66,9 @@ function _clone(data) {
         children: []
     };
     (data.children || []).forEach(function(c) {
-        result.children.push(_clone(c));
+        if(c.showed && (max <= 0 || result.children.length < max)) {
+            result.children.push(_charting(c, maxShowed, depth + 1));
+        }
     });
     return result;
 }

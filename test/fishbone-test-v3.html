@@ -1,0 +1,101 @@
+<html>
+<head>
+    <title>d3 Fishbone diagram</title>
+    <meta charset="utf-8">
+</head>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js" charset="utf-8"></script>
+<script src="../dist/uia-fishbone.js" charset="utf-8"></script>
+<body style="width:100%">
+    <table width="100%">
+        <tr>
+            <td width="150px" valign="top"><div id="ribs"></div></td>
+            <td><div id="fishbone1"></div></td>
+        </tr>
+    </table>
+    <script>
+        // 1. chart
+        let diagram = uia.fishbone.diagram("fishbone1", "100%", "600")
+            .depth(2)
+            .drilled(function() {
+                updateRibs(this);
+            });
+
+
+        // 2. data model
+        var quality = uia.fishbone.data("Quality");
+        var machine = quality
+            .add("Machine")
+                .leaf("Mill")
+                .leaf("Mixer")
+                .leaf("Metal Lathe")
+
+        var method = quality
+            .add("Method");
+
+        var material = quality
+            .add("Material");
+        material
+            .leaf("Masonite")
+            .add("Marscapone")
+                .leaf("Malty")
+                .add("Minty")
+                    .leaf("spearMint")
+                    .leaf("pepperMint");
+        var mainPower = quality
+            .add("Main Power")
+                .leaf("Manager")
+                .leaf("Master's Student")
+                .leaf("Magician")
+                .leaf("Miner");
+        mainPower.add("Magister")
+                    .leaf("Malpractice");
+        mainPower.add("Massage Artist")
+            .leaf("Masseuse")
+            .leaf("Masseur");
+        var measurement = quality
+            .add("Measurement")
+                .leaf("Malleability");
+        var milieu = quality
+            .add("Milieu")
+            .leaf("Marine");
+
+        // 3. bind to diagram
+        quality.build(diagram);
+
+        function updateRibs(diagram) {
+            let ribs = diagram.ribs();
+
+            d3.select("#ribs")
+                .selectAll("div")
+                .data([])
+                .exit()
+                .remove();
+
+            let checks = d3.select("#ribs")
+                .selectAll("div")
+                .data(ribs)
+                .enter()
+                .append("div")
+            checks.append("input")
+                .attr("type", "checkbox")
+                .attr("name", function(d) {
+                    return d.name;
+                })
+                .attr("value", function(d) {
+                    return d.id;
+                })
+                .property("checked", function(d) {
+                    return d.showed;
+                })
+                .on("change", function(d) {
+                    diagram.showBranch(this.value, this.checked);
+                });
+            checks.append("label")
+                .text(function(d) {
+                    return d.name;
+                });
+        };
+        updateRibs(diagram);
+    </script>
+</body>
+</html>
