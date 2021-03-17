@@ -94,6 +94,10 @@
     }
 
     function _tick (e) {
+        if(!this._svg || !this._svgNodes || !this._svgLinks) {
+            return;
+        }
+
         var k = 3 * e.alpha,
             size = this._force.size(),
             width = size[0],
@@ -102,6 +106,7 @@
             b;
 
         this._nodes.forEach(function (d) {
+            
             // handle the middle... could probably store the root width...
             if (d.root) {
                 d.x = width - (this._margin + this._svgRoot.getBBox().width);
@@ -241,8 +246,10 @@
         this._dataset = {};
         this._depth = 2;
         this._maxBranches = 0;
+        this._drillEnabled = true;
 
         this._event_drilled = undefined;
+        this._event_node_clicked = undefined;
     }
 
     Fishbone.prototype.drilled = function(f) {
@@ -250,6 +257,10 @@
         return this;
     };
 
+    Fishbone.prototype.nodeClicked = function(f) {
+        this._event_node_clicked = f.bind(this);
+        return this;
+    };
     /**
      * Dataset.
      * @param dataset {FishboneData} The dataset.
@@ -288,10 +299,24 @@
     /**
      * Accessor of max branches.
      * 
+     * @param drillEnabled {boolean} Drill down / up enabled.
+     */
+    Fishbone.prototype.drillEnabled = function (drillEnabled) {
+        if (arguments.length === 0) {
+            return this._drillEnabled;
+        } else {
+            this._drillEnabled = drillEnabled;
+            return this;
+        }
+    };
+
+    /**
+     * Accessor of max branches.
+     * 
      * @param maxBranches {number} The max branches.
      */
     Fishbone.prototype.maxBranches = function (maxBranches) {
-        if (!maxBranches) {
+        if (arguments.length === 0) {
             return this._maxBranches;
         } else {
             this._maxBranches = maxBranches;
@@ -455,13 +480,14 @@
         this._svgNodes
             // .call(this._force.drag)
             .on("click", function (d) {
-                if(d.key === 1) {
-                    return;
+                if(d.key !== 1 && this._drillEnabled) {
+                    this.draw(d.root ? d.owner : d.key); 
+                    if (this._event_drilled) {
+                        this._event_drilled();
+                    }
                 }
-
-                this.draw(d.root ? d.owner : d.key); 
-                if (this._event_drilled) {
-                    this._event_drilled();
+                if(this._event_node_clicked) {
+                    this._event_node_clicked(d);
                 }
                 // d3.event.stopPropagation();
             }.bind(this));

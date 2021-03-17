@@ -1,4 +1,8 @@
 export default function (e) {
+    if(!this._svg || !this._svgNodes || !this._svgLinks) {
+        return;
+    }
+
     var k = 3 * e.alpha,
         size = this._force.size(),
         width = size[0],
@@ -7,6 +11,7 @@ export default function (e) {
         b;
 
     this._nodes.forEach(function (d) {
+        
         // handle the middle... could probably store the root width...
         if (d.root) {
             d.x = width - (this._margin + this._svgRoot.getBBox().width);

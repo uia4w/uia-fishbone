@@ -67,8 +67,10 @@ function Fishbone(id, w = "100%", h = "600") {
     this._dataset = {};
     this._depth = 2;
     this._maxBranches = 0;
+    this._drillEnabled = true;
 
     this._event_drilled = undefined;
+    this._event_node_clicked = undefined;
 }
 
 Fishbone.prototype.drilled = function(f) {
@@ -76,6 +78,10 @@ Fishbone.prototype.drilled = function(f) {
     return this;
 }
 
+Fishbone.prototype.nodeClicked = function(f) {
+    this._event_node_clicked = f.bind(this);
+    return this;
+}
 /**
  * Dataset.
  * @param dataset {FishboneData} The dataset.
@@ -114,10 +120,24 @@ Fishbone.prototype.ribs = function () {
 /**
  * Accessor of max branches.
  * 
+ * @param drillEnabled {boolean} Drill down / up enabled.
+ */
+Fishbone.prototype.drillEnabled = function (drillEnabled) {
+    if (arguments.length === 0) {
+        return this._drillEnabled;
+    } else {
+        this._drillEnabled = drillEnabled;
+        return this;
+    }
+}
+
+/**
+ * Accessor of max branches.
+ * 
  * @param maxBranches {number} The max branches.
  */
 Fishbone.prototype.maxBranches = function (maxBranches) {
-    if (!maxBranches) {
+    if (arguments.length === 0) {
         return this._maxBranches;
     } else {
         this._maxBranches = maxBranches;
@@ -281,13 +301,14 @@ Fishbone.prototype.draw = function (backbone = 1) {
     this._svgNodes
         // .call(this._force.drag)
         .on("click", function (d) {
-            if(d.key === 1) {
-                return;
+            if(d.key !== 1 && this._drillEnabled) {
+                this.draw(d.root ? d.owner : d.key); 
+                if (this._event_drilled) {
+                    this._event_drilled();
+                }
             }
-
-            this.draw(d.root ? d.owner : d.key); 
-            if (this._event_drilled) {
-                this._event_drilled();
+            if(this._event_node_clicked) {
+                this._event_node_clicked(d);
             }
             // d3.event.stopPropagation();
         }.bind(this));
