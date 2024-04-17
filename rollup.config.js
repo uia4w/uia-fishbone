@@ -1,20 +1,42 @@
 const definition = require("./package.json");
 const dependencies = Object.keys(definition.dependencies || {});
 
-import nodeResolve from '@rollup/plugin-node-resolve';
-import builtins from 'rollup-plugin-node-builtins';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
-export default {
-    input: "src/index.mjs",
-    external: dependencies,
-    output: {
-        extend: true,
-        file: `dist//${definition.name}.js`,
-        format: "umd",
-        name: `uia.fishbone`
+export default [
+    // browser-friendly UMD build
+    {
+        input: 'index.js',
+        output: {
+            extend: true,
+            name: "uia",
+            file: definition.browser,
+            format: 'umd'
+        },
+        plugins: [
+            resolve(), // so Rollup can find `ms`
+            commonjs() // so Rollup can convert `ms` to an ES module
+        ],
     },
-    plugins: [ 
-        builtins(),
-        nodeResolve()
-    ]
-};
+
+    // CommonJS (for Node) and ES module (for bundlers) build.
+    // (We could have three entries in the configuration array
+    // instead of two, but it's quicker to generate multiple
+    // builds from a single configuration where possible, using
+    // an array for the `output` option, where we can specify
+    // `file` and `format` for each target)
+    {
+        input: 'index.js',
+        external: dependencies,
+        output: [{
+                file: definition.main,
+                format: 'cjs'
+            },
+            {
+                file: definition.module,
+                format: 'es'
+            }
+        ]
+    }
+];

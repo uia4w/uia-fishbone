@@ -1,0 +1,1 @@
+export * as fishbone from "./src/fishbone/index";

@@ -1,28 +1,31 @@
 {
-  "name": "uia-fishbone",
-  "version": "0.1.0",
-  "description": "Fishbone Chart",
-  "main": "dist/uia-fishbone.js",
-  "scripts": {
-    "pretest": "rollup -c",
-    "test": "tape test/**/*-test.js",
-    "pretest1": "rollup -c",
-    "test1": "tape ",
-    "eslint": "eslint src/**/*.mjs"
-  },
-  "keywords": [
-    "fishbone",
-    "d3"
-  ],
-  "author": "Kyle K. Lin",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@rollup/plugin-node-resolve": "^11.2.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "tape": "^5.2.0"
-  },
-  "dependencies": {
-    "d3": "^6.5.0",
-    "rollup": "^2.39.1"
-  }
+    "name": "uia-fishbone",
+    "version": "0.1.0",
+    "main": "dist/uia-fishbone.cjs.js",
+    "module": "dist/uia-fishbone.esm.js",
+    "browser": "dist/uia-fishbone.js",
+    "dependencies": {
+        "d3": "^7.8.5",
+        "ms": "^2.0.0"
+    },
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^11.0.1",
+        "@rollup/plugin-node-resolve": "^7.0.0",
+        "rollup": "^1.32.1"
+    },
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "test": "node test/test.js",
+        "pretest": "npm run build"
+    },
+    "keywords": [
+        "fishbone",
+        "d3"
+    ],
+    "author": "Kyle K. Lin",
+    "license": "Apache-2.0",
+    "files": [
+        "dist"
+    ]
 }

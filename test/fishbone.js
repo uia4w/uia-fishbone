@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 */
-(function (d3) {
+(function(d3) {
     "use strict";
-    d3.fishbone = function () {
+    d3.fishbone = function() {
         /*
           A Fishbone diagram implemented in d3.
         */
@@ -40,22 +40,22 @@ THE SOFTWARE.
         var _node,
             _link,
             _root,
-            _arrowId = function (d) {
+            _arrowId = function(d) {
                 return "arrow";
             },
 
             // the children accessor
-            _children = function (d) {
+            _children = function(d) {
                 return d.children;
             },
 
             // the label accessor
-            _label = function (d) {
+            _label = function(d) {
                 return d.name;
             },
 
             // a custom tick accessor
-            _perNodeTick = function (d) {},
+            _perNodeTick = function(d) {},
 
 
             // arbitrary "nice" values
@@ -74,7 +74,7 @@ THE SOFTWARE.
             .chargeDistance([10])
             .on("tick", _tick);
 
-        var fb1 = function ($) {
+        var fb1 = function($) {
             /*
           the d3.fishbone modifier, expecting to be called against an `svg:svg`
           or `svg:g` bound to the root node of a navigable tree, i.e.
@@ -116,10 +116,10 @@ THE SOFTWARE.
 
             _link
                 .attr({
-                    "class": function (d) {
+                    "class": function(d) {
                         return "link link-" + d.depth;
                     },
-                    "marker-end": function (d) {
+                    "marker-end": function(d) {
                         return d.arrow ? "url(#" + _arrowId(d) + ")" : null;
                     }
                 });
@@ -133,7 +133,7 @@ THE SOFTWARE.
             // actually create nodes
             _node.enter().append("g")
                 .attr({
-                    "class": function (d) {
+                    "class": function(d) {
                         return "node" + (d.root ? " root" : "");
                     }
                 })
@@ -141,13 +141,13 @@ THE SOFTWARE.
 
             _node.select("text")
                 .attr({
-                    "class": function (d) {
+                    "class": function(d) {
                         return "label-" + d.depth;
                     },
-                    "text-anchor": function (d) {
+                    "text-anchor": function(d) {
                         return !d.depth ? "start" : d.horizontal ? "end" : "middle";
                     },
-                    dy: function (d) {
+                    dy: function(d) {
                         return d.horizontal ? ".35em" : d.region === 1 ? "1em" : "-.2em";
                     }
                 })
@@ -158,7 +158,7 @@ THE SOFTWARE.
             // set up node events
             _node
                 .call(_force.drag)
-                .on("mousedown", function () {
+                .on("mousedown", function() {
                     d3.event.stopPropagation();
                 });
 
@@ -236,7 +236,6 @@ THE SOFTWARE.
                 nodeLinks[0].source = prev;
                 nodeLinks[0].target = node;
                 node.horizontal = true;
-                node.vertical = false;
                 node.depth = 0;
                 node.root = true;
                 node.totalLinks = []
@@ -247,13 +246,12 @@ THE SOFTWARE.
 
             node.linkCount = 1;
 
-            (_children(node) || []).forEach(function (child, idx) {
+            (_children(node) || []).forEach(function(child, idx) {
                 child.parent = node;
                 child.depth = (node.depth || 0) + 1;
                 child.childIdx = idx;
                 child.region = node.region ? node.region : (idx & 1 ? 1 : -1);
                 child.horizontal = !node.horizontal;
-                child.vertical = !node.vertical;
 
                 if (node.root && prev && !prev.tail) {
                     _nodes.push(child.connector = {
@@ -292,16 +290,16 @@ THE SOFTWARE.
 
         function _linePosition($) {
             $.attr({
-                x1: function (d) {
+                x1: function(d) {
                     return d.source.x;
                 },
-                y1: function (d) {
+                y1: function(d) {
                     return d.source.y;
                 },
-                x2: function (d) {
+                x2: function(d) {
                     return d.target.x;
                 },
-                y2: function (d) {
+                y2: function(d) {
                     return d.target.y;
                 }
             })
@@ -310,7 +308,7 @@ THE SOFTWARE.
 
         function _nodePosition($) {
             // uses an SVG `transform` to position nodes
-            $.attr("transform", function (d) {
+            $.attr("transform", function(d) {
                 return "translate(" + d.x + "," + d.y + ")";
             })
         }
@@ -340,7 +338,7 @@ THE SOFTWARE.
                 a,
                 b;
 
-            _nodes.forEach(function (d) {
+            _nodes.forEach(function(d) {
                 // handle the middle... could probably store the root width...
                 if (d.root) {
                     d.x = width - (_margin + _root.getBBox().width);
@@ -387,13 +385,13 @@ THE SOFTWARE.
 
         // the d3.fishbone() public API
         // read-only
-        fb1.links = function () {
+        fb1.links = function() {
             return _links;
         };
-        fb1.nodes = function () {
+        fb1.nodes = function() {
             return _nodes;
         };
-        fb1.force = function () {
+        fb1.force = function() {
             return _force;
         };
 
@@ -401,7 +399,7 @@ THE SOFTWARE.
         fb1.defaultArrow = _arrow;
 
         // d3-style chainable
-        fb1.margin = function (_) {
+        fb1.margin = function(_) {
             // how big is the whitespace around the diagram?
             if (!arguments.length) {
                 return _margin;
@@ -410,7 +408,7 @@ THE SOFTWARE.
             return my;
         };
 
-        fb1.children = function (_) {
+        fb1.children = function(_) {
             // how  will children be sought from each node?
             if (!arguments.length) {
                 return _children;
@@ -419,7 +417,7 @@ THE SOFTWARE.
             return my;
         };
 
-        fb1.label = function (_) {
+        fb1.label = function(_) {
             // how will a label be sought from each node?
             if (!arguments.length) {
                 return _label;
@@ -428,7 +426,7 @@ THE SOFTWARE.
             return my;
         };
 
-        fb1.perNodeTick = function (_) {
+        fb1.perNodeTick = function(_) {
             // what custom rules should be done per node?
             if (!arguments.length) {
                 return _perNodeTick;
